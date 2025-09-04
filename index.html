@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Site Moderne Dark Theme</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            background: linear-gradient(135deg, #1a1a1a 0%, #2c2c2c 100%);
+            min-height: 100vh;
+            font-family: 'Inter', sans-serif;
+        }
+        .btn {
+            transition: transform 0.3s ease, background-color 0.3s ease;
+        }
+        .btn:hover {
+            transform: scale(1.05);
+            background-color: #4b5563;
+        }
+    </style>
+</head>
+<body class="flex items-center justify-center">
+    <div class="text-center text-white">
+        <h1 class="text-4xl font-bold mb-8">site de lolo</h1>
+        <div class="space-x-4">
+            <a href="list_files.html" class="btn inline-block bg-gray-700 text-white px-6 py-3 rounded-lg shadow-lg">liste compte rendu</a>
+            <a href="moi.html" class="btn inline-block bg-gray-700 text-white px-6 py-3 rounded-lg shadow-lg">mon cv</a>
+        </div>
+    </div>
+</body>
+</html>
