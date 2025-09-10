@@ -26,11 +26,11 @@ jobs:
       - name: Install deps (none needed)
         run: echo "No deps"
 
-      - name: Generate data.json
+      - name: Generate config.json
         run: node .github/scripts/generate_data.mjs
 
-      - name: Commit data.json
+      - name: Commit config.json
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
           commit_message: "chore: regenerate data.json"
-          file_pattern: "data.json"
+          file_pattern: "config.json"
