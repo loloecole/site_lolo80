@@ -1,20 +1,27 @@
 {
-  "generated_at": "2025-09-10T14:08:44.639Z",
-  "count": 2,
+  "generated_at": "2025-09-10T14:13:00.367Z",
+  "count": 3,
   "files": [
     {
-      "name": "paf.pdf",
-      "path": "compte_rendu/paf.pdf",
-      "size_bytes": 0,
-      "mtime_iso": "2025-09-10T14:08:43.802Z",
-      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      "name": "angry_bird.pdf",
+      "path": "compte_rendu/angry_bird.pdf",
+      "size_bytes": 442249,
+      "mtime_iso": "2025-09-10T14:12:59.607Z",
+      "sha256": "af1009da3a85ca1300b4f66763874ff2d55be46bb5502d6c1c94e15c2835a19f"
     },
     {
-      "name": "paf2.pdf",
-      "path": "compte_rendu/paf2.pdf",
-      "size_bytes": 0,
-      "mtime_iso": "2025-09-10T14:08:43.802Z",
-      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      "name": "BP1 TP02 dianostique.pdf",
+      "path": "compte_rendu/BP1 TP02 dianostique.pdf",
+      "size_bytes": 196225,
+      "mtime_iso": "2025-09-10T14:12:59.605Z",
+      "sha256": "2c5a82695ef9ac97ec96121878c7617b834c0df555cbee44815f2ab6b5947c4a"
+    },
+    {
+      "name": "compte_rendu_site.pdf",
+      "path": "compte_rendu/compte_rendu_site.pdf",
+      "size_bytes": 582771,
+      "mtime_iso": "2025-09-10T14:12:59.609Z",
+      "sha256": "936369b7f45892ae6fbe0525bf016a0968a602fa663f302ec36aa71a42f038e2"
     }
   ]
 }
