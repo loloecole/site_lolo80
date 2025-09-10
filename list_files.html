@@ -1,85 +1,99 @@
-<!DOCTYPE html>
-<html lang="fr">
+<script type="text/javascript">
+        var gk_isXlsx = false;
+        var gk_xlsxFileLookup = {};
+        var gk_fileData = {};
+        function filledCell(cell) {
+          return cell !== '' && cell != null;
+        }
+        function loadFileData(filename) {
+        if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
+            try {
+                var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
+                var firstSheetName = workbook.SheetNames[0];
+                var worksheet = workbook.Sheets[firstSheetName];
+
+                // Convert sheet to JSON to filter blank rows
+                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
+                // Filter out blank rows (rows where all cells are empty, null, or undefined)
+                var filteredData = jsonData.filter(row => row.some(filledCell));
+
+                // Heuristic to find the header row by ignoring rows with fewer filled cells than the next row
+                var headerRowIndex = filteredData.findIndex((row, index) =>
+                  row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
+                );
+                // Fallback
+                if (headerRowIndex === -1 || headerRowIndex > 25) {
+                  headerRowIndex = 0;
+                }
+
+                // Convert filtered JSON back to CSV
+                var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex)); // Create a new sheet from filtered array of arrays
+                csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
+                return csv;
+            } catch (e) {
+                console.error(e);
+                return "";
+            }
+        }
+        return gk_fileData[filename] || "";
+        }
+        </script><!DOCTYPE html>
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>fichier compte rendu a telecharger</title>
-    <style>
-        body {
-            background-color: #1a1a1a;
-            color: #e0e0e0;
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            min-height: 100vh;
-            margin: 0;
-        }
-        h1 {
-            font-size: 2rem;
-            margin: 20px 0;
-            color: #ffffff;
-        }
-        .file-container {
-            width: 300px;
-            max-height: 300px;
-            overflow-y: auto;
-            background-color: #2c2c2c;
-            border-radius: 8px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-            padding: 10px;
-        }
-        .file-item {
-            padding: 10px;
-            margin: 5px 0;
-            background-color: #3a3a3a;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: background-color 0.2s ease, transform 0.2s ease;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            color: #e0e0e0;
-            text-decoration: none;
-        }
-        .file-item:hover {
-            background-color: #4a4a4a;
-            transform: translateX(5px);
-        }
-        .file-item::before {
-            content: '📄';
-            font-size: 1.2rem;
-        }
-        .file-item:active {
-            background-color: #5a5a5a;
-        }
-        /* Style pour la scrollbar */
-        .file-container::-webkit-scrollbar {
-            width: 8px;
-        }
-        .file-container::-webkit-scrollbar-track {
-            background: #2c2c2c;
-            border-radius: 4px;
-        }
-        .file-container::-webkit-scrollbar-thumb {
-            background: #555;
-            border-radius: 4px;
-        }
-        .file-container::-webkit-scrollbar-thumb:hover {
-            background: #777;
-        }
-    </style>
+    <title>Scrollable File List</title>
+    <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body>
-    <h1>Sélectionnez un fichier à télécharger</h1>
-    <div class="file-container">
-        <a href="compte_rendu_site.pdf" class="file-item">compte_rendu_site.rtf</a>
-        <a href="angry_bird.pdf" class="file-item">angry_bird.pdf</a>
-        <a href="init_pc.pdf" class="file-item">initialisation_pc.pdf</a>
-        <!--<a href="compte_rendu_site.rtf" class="file-item">compte_rendu_site.rtf</a>
-        <!--<a href="document.txt" class="file-item">document.txt</a>
-        <!--<a href="rapport.pdf" class="file-item">rapport.pdf</a>
-        <!-- Ajoute d'autres fichiers ici si besoin -->
+<body class="bg-gray-100 flex items-center justify-center min-h-screen">
+    <div class="w-full max-w-4xl p-6 bg-white rounded-lg shadow-lg">
+        <h1 class="text-2xl font-bold mb-4 text-gray-800">File List</h1>
+        <div class="overflow-y-auto max-h-96">
+            <table class="w-full table-auto border-collapse">
+                <thead>
+                    <tr class="bg-gray-200 text-gray-700">
+                        <th class="p-3 text-left">Name</th>
+                        <th class="p-3 text-left">Path</th>
+                        <th class="p-3 text-left">Size (Bytes)</th>
+                        <th class="p-3 text-left">Last Modified</th>
+                    </tr>
+                </thead>
+                <tbody id="fileList" class="text-gray-600">
+                    <!-- File rows will be inserted here -->
+                </tbody>
+            </table>
+        </div>
     </div>
+
+    <script>
+        // Function to populate the file list from config.json
+        async function populateFileList() {
+            try {
+                const response = await fetch('config.json');
+                if (!response.ok) throw new Error('Failed to load config.json');
+                const config = await response.json();
+                const fileList = document.getElementById('fileList');
+
+                config.files.forEach(file => {
+                    const row = document.createElement('tr');
+                    row.className = 'border-b hover:bg-gray-50';
+                    row.innerHTML = `
+                        <td class="p-3"><a href="${file.path}" download class="text-blue-600 hover:underline">${file.name}</a></td>
+                        <td class="p-3">${file.path}</td>
+                        <td class="p-3">${file.size_bytes}</td>
+                        <td class="p-3">${new Date(file.mtime_iso).toLocaleString()}</td>
+                    `;
+                    fileList.appendChild(row);
+                });
+            } catch (error) {
+                console.error('Error loading file list:', error);
+                const fileList = document.getElementById('fileList');
+                fileList.innerHTML = '<tr><td colspan="4" class="p-3 text-red-600">Failed to load file list. Please check config.json.</td></tr>';
+            }
+        }
+
+        // Load the file list when the page loads
+        window.onload = populateFileList;
+    </script>
 </body>
 </html>
